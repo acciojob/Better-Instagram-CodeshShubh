@@ -1,34 +1,47 @@
-//your code here
- const images = document.querySelectorAll(".image");
-let draggedImage = null;
-let targetImage = null;
 
-// Add drag-and-drop event listeners to each image
-images.forEach((image) => {
-  image.addEventListener("dragstart", (e) => {
-    draggedImage = e.target; 
-  }); 
+let dragindex = 0;
+let dropindex = 0;
+let clone = "";
 
-  // When dragging ends
-  image.addEventListener("dragend", (e) => {
-    draggedImage = null; // Clear the reference
-	targetImage = null;
-  });
+const images = document.querySelectorAll(".image");
 
-  // Allow drop by preventing default behavior
-  image.addEventListener("dragover", (e) => {
-    e.preventDefault();
-	  targetImage = e.target; // Store the image being dragged over
-  });
+function drag(e) {
+  e.dataTransfer.setData("text", e.target.id);
+}
 
-  // Handle the drop
-  image.addEventListener("drop", () => {
-	  e.preventDefault();
-    if(draggedImage && targetImage){
-		const tempId = draggedImage.id;
-    draggedImage.id = targetImage.id;
-    targetImage.id = tempId;
-	}
-  });
-});
+function allowDrop(e) {
+  e.preventDefault();
+}
 
+function drop(e) {
+  clone = e.target.cloneNode(true);
+  let data = e.dataTransfer.getData("text");
+  let nodelist = document.getElementById("parent").childNodes;
+  console.log(data, e.target.id);
+  for (let i = 0; i < nodelist.length; i++) {
+    if (nodelist[i].id == data) {
+      dragindex = i;
+    }
+  }
+
+  dragdrop(clone);
+
+  document
+    .getElementById("parent")
+    .replaceChild(document.getElementById(data), e.target);
+
+  document
+    .getElementById("parent")
+    .insertBefore(
+      clone,
+      document.getElementById("parent").childNodes[dragindex]
+    );
+}
+
+const dragdrop = (image) => {
+  image.ondragstart = drag;
+  image.ondragover = allowDrop;
+  image.ondrop = drop;
+};
+
+images.forEach(dragdrop);
