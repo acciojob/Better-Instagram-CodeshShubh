@@ -23,10 +23,11 @@ images.forEach((image) => {
 
   // Handle the drop
   image.addEventListener("drop", () => {
+	  e.preventDefault();
     if(draggedImage && targetImage){
-		const temHTML = draggedImage.innerHTML;
-		draggedImage.innerHTML = targetImage.innerHTML;
-		targetImage.innerHTML = temHTML;
+		const tempId = draggedImage.id;
+    draggedImage.id = targetImage.id;
+    targetImage.id = tempId;
 	}
   });
 });
